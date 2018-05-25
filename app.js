@@ -1,27 +1,39 @@
 $(document).ready(function () {
 
     let topics = [
-        "Kanye West",
-        "Travis Scott",
-        "Rick Ross",
-        "Quavo",
-        "J Cole",
-        "Post Malone"
+        "kanye west",
+        "travis scott",
+        "rick ross",
+        "quavo",
+        "j cole",
+        "post malone",
+        "drake"
     ];
 
     function createButtons() {
-        $("gif-button").empty();
+        $("#gif-button").empty();
         topics.forEach(function (event) {
-            console.log(event)
             const gifButton = $("<button>");
             gifButton.attr({
                 class: "topic-button btn-dark",
                 "data-person": event
             });
-            gifButton.text(event)
+            gifButton.text(event.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                return letter.toUpperCase();
+            }));
             $("#gif-button").append(gifButton);
         })
 
+    }
+
+    function newButtons() {
+        const newArtist = $("#add-artist").val().trim();
+        $("#add-artist").text("Add an Artist");
+        topics.push(newArtist.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+            return letter.toUpperCase();
+        }));
+        createButtons();
+        // buttonData();
     }
 
     // FUNCTION TO GENERATE INITIAL BUTTONS 
@@ -33,14 +45,11 @@ $(document).ready(function () {
 
         let artistClicked = $(this).attr("data-person")
         const queryURL = `https://api.giphy.com/v1/gifs/search?q=${artistClicked}&api_key=${giphyAPI}&limit=10`;
-        console.log(queryURL);
 
         axios.get(queryURL)
             .then(function (resp) {
                 const results = resp.data.data;
-                console.log(results);
                 results.forEach(function (display) {
-                    console.log(display)
                     const gifImage = $("<img>");
                     const belowImage = $("<h6 class='ml-2'>");
                     const stillGif = display.images.fixed_height_still.url;
@@ -53,15 +62,17 @@ $(document).ready(function () {
                         "data-animate": animateGif,
                         "data-state": "still"
                     });
+
                     belowImage.text(`Rating: ${gifRating.toUpperCase()}`);
                     $("#gif-dump").prepend(belowImage).prepend(gifImage);
                 })
             })
             .catch(function (err) {
-                // console.error(err);
+                console.error(err);
             })
     })
 
+    // FUNCTION FOR PLAYING AND PAUSING GIFS
     $(document).on("click", ".artist-gif", function () {
 
         const state = $(this).attr("data-state");
@@ -73,8 +84,14 @@ $(document).ready(function () {
 
         else {
             $(this).attr("src", $(this).attr("data-still"));
-            $(this).attr("data-state", "still");  
+            $(this).attr("data-state", "still");
         }
+    })
+
+    //FUNCTION FOR CREATING NEW BUTTONS FROM FORM INPUT
+    $("#submit-button").on("click", function () {
+        event.preventDefault()  
+        newButtons()
     })
 
 })

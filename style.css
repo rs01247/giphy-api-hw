@@ -1,12 +1,18 @@
+body {
+    background-color: lightgray;
+}
+
 #main-div {
     border: 2px solid black;
+    margin-top: 5vh;
+    background: url("./images/subtle_white_mini_waves.png")
 }
 
 .topic-button {
     margin: 1vh;
 }
 
-#submit-button {
+#submit-div {
     border: 1px solid black;
     background-color: lightgray;
 }
