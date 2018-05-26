@@ -9,8 +9,10 @@ $(document).ready(function () {
         "post malone",
         "drake"
     ];
+
     const giphyAPI = "rkMz99czA9apZlqQY8uUZr7Amja7v51P";
 
+    // FUNCTION TO GENERATE INITIAL BUTTONS 
     function createButtons() {
         $("#gif-button").empty();
         topics.forEach(function (event) {
@@ -27,23 +29,12 @@ $(document).ready(function () {
 
     }
 
-    // FUNCTION TO GENERATE INITIAL BUTTONS 
-    function newButtons() {
-        const newArtist = $("#add-artist").val().trim();
-        $("#add-artist").text("Add an Artist");
-        topics.push(newArtist.toLowerCase().replace(/\b[a-z]/g, function (letter) {
-            return letter.toUpperCase();
-        }));
-        createButtons();
-        appClick();
-    }
-
     // FUNCTION TO PULL GIPHY API FROM BUTTON CLICK
-    function appClick() {
+    function buttonClick() {
         $(".topic-button").on("click", function () {
             event.preventDefault()
 
-            let artistClicked = $(this).attr("data-person")
+            const artistClicked = $(this).attr("data-person")
             const queryURL = `https://api.giphy.com/v1/gifs/search?q=${artistClicked}&api_key=${giphyAPI}&limit=10`;
 
             axios.get(queryURL)
@@ -75,29 +66,45 @@ $(document).ready(function () {
         })
     }
 
-    createButtons();
-    appClick();
-
     // FUNCTION FOR PLAYING AND PAUSING GIFS
-    $(document).on("click", ".artist-gif", function () {
+    function gifClick() {
+        $(document).on("click", ".artist-gif", function () {
 
-        const state = $(this).attr("data-state");
+            const state = $(this).attr("data-state");
 
-        if (state === "still") {
-            $(this).attr("src", $(this).attr("data-animate"));
-            $(this).attr("data-state", "animate")
-        }
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate")
+            }
 
-        else {
-            $(this).attr("src", $(this).attr("data-still"));
-            $(this).attr("data-state", "still");
-        }
-    })
+            else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+        })
+    }
 
     //FUNCTION FOR CREATING NEW BUTTONS FROM FORM INPUT
-    $("#submit-button").on("click", function () {
-        event.preventDefault()
-        newButtons()
-    })
+    function newButtons() {
+        $("#submit-button").on("click", function () {
+            event.preventDefault()
+
+            const newArtist = $("#add-artist").val().trim();
+            $("#add-artist").text("Add an Artist");
+            topics.push(newArtist.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+                return letter.toUpperCase();
+            }));
+    
+            createButtons();
+            buttonClick();
+        })
+    }
+
+    //APP LOGIC
+    createButtons();
+    buttonClick();
+    gifClick();
+    newButtons()
+
 
 })
