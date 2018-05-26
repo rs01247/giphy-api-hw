@@ -9,6 +9,7 @@ $(document).ready(function () {
         "post malone",
         "drake"
     ];
+    const giphyAPI = "rkMz99czA9apZlqQY8uUZr7Amja7v51P";
 
     function createButtons() {
         $("#gif-button").empty();
@@ -18,7 +19,7 @@ $(document).ready(function () {
                 class: "topic-button btn-dark",
                 "data-person": event
             });
-            gifButton.text(event.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+            gifButton.text(event.toLowerCase().replace(/\b[a-z]/g, function (letter) {
                 return letter.toUpperCase();
             }));
             $("#gif-button").append(gifButton);
@@ -26,51 +27,56 @@ $(document).ready(function () {
 
     }
 
+    // FUNCTION TO GENERATE INITIAL BUTTONS 
     function newButtons() {
         const newArtist = $("#add-artist").val().trim();
         $("#add-artist").text("Add an Artist");
-        topics.push(newArtist.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+        topics.push(newArtist.toLowerCase().replace(/\b[a-z]/g, function (letter) {
             return letter.toUpperCase();
         }));
         createButtons();
-        // buttonData();
+        appClick();
     }
 
-    // FUNCTION TO GENERATE INITIAL BUTTONS 
-    createButtons();
-    const giphyAPI = "rkMz99czA9apZlqQY8uUZr7Amja7v51P";
+    // FUNCTION TO PULL GIPHY API FROM BUTTON CLICK
+    function appClick() {
+        $(".topic-button").on("click", function () {
+            event.preventDefault()
 
-    $(".topic-button").on("click", function () {
-        event.preventDefault()
+            let artistClicked = $(this).attr("data-person")
+            const queryURL = `https://api.giphy.com/v1/gifs/search?q=${artistClicked}&api_key=${giphyAPI}&limit=10`;
 
-        let artistClicked = $(this).attr("data-person")
-        const queryURL = `https://api.giphy.com/v1/gifs/search?q=${artistClicked}&api_key=${giphyAPI}&limit=10`;
-
-        axios.get(queryURL)
-            .then(function (resp) {
-                const results = resp.data.data;
-                results.forEach(function (display) {
-                    const gifImage = $("<img>");
-                    const belowImage = $("<h6 class='ml-2'>");
-                    const stillGif = display.images.fixed_height_still.url;
-                    const animateGif = display.images.fixed_height.url;
-                    const gifRating = display.rating;
-                    gifImage.attr({
-                        class: "artist-gif",
-                        src: stillGif,
-                        "data-still": stillGif,
-                        "data-animate": animateGif,
-                        "data-state": "still"
-                    });
-
-                    belowImage.text(`Rating: ${gifRating.toUpperCase()}`);
-                    $("#gif-dump").prepend(belowImage).prepend(gifImage);
+            axios.get(queryURL)
+                .then(function (resp) {
+                    const results = resp.data.data;
+                    results.forEach(function (display) {
+                        const gifImage = $("<img>");
+                        const belowImage = $("<p class='ml-2'>");
+                        const gifDiv = $("<div>");
+                        // gifDiv.attr("class", "gif-box");
+                        const stillGif = display.images.fixed_height_still.url;
+                        const animateGif = display.images.fixed_height.url;
+                        const gifRating = display.rating;
+                        gifImage.attr({
+                            class: "artist-gif",
+                            src: stillGif,
+                            "data-still": stillGif,
+                            "data-animate": animateGif,
+                            "data-state": "still"
+                        });
+                        belowImage.text(`Rating: ${gifRating.toUpperCase()}`);
+                        gifDiv.append(gifImage, belowImage);
+                        $("#gif-dump").prepend(gifDiv);
+                    })
                 })
-            })
-            .catch(function (err) {
-                console.error(err);
-            })
-    })
+                .catch(function (err) {
+                    console.error(err);
+                })
+        })
+    }
+
+    createButtons();
+    appClick();
 
     // FUNCTION FOR PLAYING AND PAUSING GIFS
     $(document).on("click", ".artist-gif", function () {
@@ -90,7 +96,7 @@ $(document).ready(function () {
 
     //FUNCTION FOR CREATING NEW BUTTONS FROM FORM INPUT
     $("#submit-button").on("click", function () {
-        event.preventDefault()  
+        event.preventDefault()
         newButtons()
     })
 

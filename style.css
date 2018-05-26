@@ -4,8 +4,13 @@ body {
 
 #main-div {
     border: 2px solid black;
-    margin-top: 5vh;
+    margin-top: 10vh;
     background: url("./images/subtle_white_mini_waves.png")
+}
+
+#page-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 10vh;
 }
 
 .topic-button {
