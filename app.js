@@ -42,7 +42,7 @@ $(document).ready(function () {
                     const results = resp.data.data;
                     results.forEach(function (display) {
                         const gifImage = $("<img>");
-                        const belowImage = $("<p class='ml-2'>");
+                        const belowImage = $("<p class='ml-2 text-light'>");
                         const gifDiv = $("<div>");
                         // gifDiv.attr("class", "gif-box");
                         const stillGif = display.images.fixed_height_still.url;
