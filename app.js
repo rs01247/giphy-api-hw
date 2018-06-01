@@ -90,7 +90,7 @@ $(document).ready(function () {
             event.preventDefault()
 
             const newArtist = $("#add-artist").val().trim();
-            $("#add-artist").text("Add an Artist");
+            $("#add-artist").val("");
             topics.push(newArtist.toLowerCase().replace(/\b[a-z]/g, function (letter) {
                 return letter.toUpperCase();
             }));
